@@ -78,5 +78,40 @@ describe('createClass', () => {
       const str = ReactDOMServer.renderToStaticMarkup(element)
       expect(str).toEqual('<div>nested test</div>')
     })
+
+    test('rendering multiple children of different types', () => {
+      const Factory = factoryWithRenderSpec([
+        'div',
+        null,
+        'Hello, ',
+        { type: 'propAccessor', key: 'name' }
+      ])
+      const element = Factory({ name: 'John Galt' })
+      const str = ReactDOMServer.renderToStaticMarkup(element)
+      expect(str).toEqual('<div>Hello, John Galt</div>')
+    })
+
+    test('rendering nested children', () => {
+      const Factory = factoryWithRenderSpec([
+        'div',
+        null,
+        'Hello, ',
+        { type: 'propAccessor', key: 'name' },
+        [ 'br' ],
+        [
+          'div',
+          null,
+          'You said your name was: ',
+          [
+            'span',
+            null,
+            { type: 'propAccessor', key: 'name' },
+          ]
+        ]
+      ])
+      const element = Factory({ name: 'John Galt' })
+      const str = ReactDOMServer.renderToStaticMarkup(element)
+      expect(str).toEqual('<div>Hello, John Galt<br/><div>You said your name was: <span>John Galt</span></div></div>')
+    })
   })
 })

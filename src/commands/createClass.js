@@ -17,9 +17,14 @@ const memberExpression = (obj, keys) => {
     return newObj
   }
 }
+
 function walkArray (arr, instance) {
-  const [type, props=null, children] = arr
-  return React.createElement(type, props, walkRenderNode(children, instance))
+  const [type, props=null, ...children] = arr
+  return React.createElement(
+    type,
+    props,
+    ...children.map(node => walkRenderNode(node, instance))
+  )
 }
 
 function walkRenderNode (node, instance) {
@@ -29,6 +34,9 @@ function walkRenderNode (node, instance) {
   if (node instanceof Object && node.type) {
     if (node.type === 'propAccessor') {
       return memberExpression(instance.props, node.key)
+    }
+    if (node.type === 'string') {
+      return node.value
     }
   }
   return node
