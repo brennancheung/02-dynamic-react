@@ -2,21 +2,41 @@ import React from 'react'
 import createReactClass from 'create-react-class'
 import propSpecToTypes from '../helpers/propSpecToTypes'
 
-function walkArray (arr) {
+const memberExpression = (obj, keys) => {
+  if (typeof keys === 'string') {
+    return obj[keys]
+  }
+  if (keys instanceof Array) {
+    const [ head, ...tail ] = keys
+    const newObj = obj[head]
+
+    if (tail.length > 0) {
+      return memberExpression(newObj, tail)
+    }
+
+    return newObj
+  }
+}
+function walkArray (arr, instance) {
   const [type, props=null, children] = arr
-  return React.createElement(type, props, walkRenderNode(children))
+  return React.createElement(type, props, walkRenderNode(children, instance))
 }
 
-function walkRenderNode (node) {
+function walkRenderNode (node, instance) {
   if (node instanceof Array) {
-    return walkArray(node)
+    return walkArray(node, instance)
+  }
+  if (node instanceof Object && node.type) {
+    if (node.type === 'propAccessor') {
+      return memberExpression(instance.props, node.key)
+    }
   }
   return node
 }
 
 function createRenderFunc (renderTree) {
   return function () {
-    return walkRenderNode(renderTree)
+    return walkRenderNode(renderTree, this)
   }
 }
 
