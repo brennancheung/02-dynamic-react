@@ -2,6 +2,28 @@ import React, { Component } from 'react'
 import './App.css'
 import createReactClass from 'create-react-class'
 import { HotKeys } from 'react-hotkeys'
+import PropTypes from 'prop-types'
+
+let commands = []
+commands.push({
+  type: 'CREATE_CLASS',
+  payload: {
+    name: 'Greeting',
+    props: {
+      name: { type: 'string', default: '' }
+    },
+    render: [
+      ['div', null, [
+        'Hello ',
+        { type: 'prop', value: 'name' }
+      ]]
+    ]
+  }
+})
+
+// Contains React components
+let registry = {
+}
 
 const Greeting = createReactClass({
   render () {
@@ -25,11 +47,13 @@ class App extends Component {
   render () {
     return (
       <HotKeys keyMap={map}>
-        <div className="App">
-          <HotKeys handlers={handlers}>
-            <Greeting name="Brennan" />
-          </HotKeys>
-        </div>
+        <HotKeys handlers={handlers}>
+          <div className="main-container">
+            <div className="App">
+              <Greeting name="Brennan" />
+            </div>
+          </div>
+        </HotKeys>
       </HotKeys>
     )
   }
