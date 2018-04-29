@@ -1,0 +1,10 @@
+{
+  "extends": ["standard", "standard-react"],
+  "rules": {
+    "comma-dangle": 0,
+    "jsx-quotes": 0,
+    "react/prop-types": 0,
+    "no-new": 0,
+    "space-infix-ops": 0,
+  }
+}
